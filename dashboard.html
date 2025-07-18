@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Job Market Insights Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="dashboard_styles.css">
+<style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #2a1157 0%, #4e2c7a 60%, #7a3e8e 100%);
+      background-image: linear-gradient(120deg, rgba(42,17,87,0.97) 0%, rgba(78,44,122,0.92) 60%, rgba(122,62,142,0.32) 100%), url("NEW_BG (1).png");
+      background-size: cover, cover;
+      background-repeat: no-repeat, no-repeat;
+      background-position: center, center;
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem;
+      box-sizing: border-box;
+      line-height: 1.6; /* Adjusted line height */
+    }
+
+    nav {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 0.7rem; /* Adjusted padding */
+      border-radius: 12px;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    nav button {
+      background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%);
+      color: #000;
+      padding: 0.5rem 1rem; /* Adjusted padding */
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    nav button:hover {
+      transform: scale(1.05);
+    }
+
+    .category {
+      display: none;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .category.active {
+      display: block;
+    }
+
+    .chart-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem; /* Adjusted spacing below buttons */
+    }
+
+    .chart-buttons button {
+      background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%);
+      color: #000;
+      padding: 0.5rem 1rem; /* Adjusted padding */
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      font-size: 0.9em; /* Adjusted font-size */
+    }
+
+    .chart-buttons button:hover {
+      transform: scale(1.05);
+    }
+
+    .chart-container, .about-container { /* Added .about-container */
+      display: none;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1rem; /* Adjusted padding */
+      margin-bottom: 1.5rem; /* Adjusted spacing between containers */
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      color: #333; /* Consistent text color */
+      background-color: #fff; /* Background of the container */
+    }
+
+    .chart-container.active, .about-container.active { /* Added .about-container */
+      display: block;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .description {
+      margin-top: 0.8rem; /* Adjusted spacing above description to bring it closer */
+      font-size: 1em; /* Slightly increased font size */
+      color: #333;
+      text-align: left; /* Explicitly left-align the description */
+      padding: 1rem; /* Padding for the description box */
+      border-radius: 10px; /* Rounded corners for the description box */
+      background: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+    .description ul {
+        margin-top: 0.5rem;
+        padding-left: 1.5rem;
+        line-height: 1.6; /* Comfortable line spacing for lists */
+    }
+    .description li {
+        margin-bottom: 0.5rem;
+    }
+    .description strong {
+        color: #4e2c7a; /* A darker purple from the gradient for emphasis */
+    }
+
+    iframe {
+      border: none;
+      width: 95%; /* Chart width */
+      height: 600px; /* Default height for iframes */
+      background-color: #fff; /* White background for the embedded chart content */
+      display: block; /* Important for margin:auto to work */
+      margin: 0 auto; /* Centers the iframe horizontally */
+      border-radius: 5px; /* Slight rounder corners for the iframe */
+    }
+
+    .about-container p, .about-container ul, .about-container table {
+        color: #333; /* Ensure text in about section is readable */
+        text-align: left;
+        margin-bottom: 1rem;
+        font-size: 0.9em; /* Adjusted font-size */
+        padding-left: 0.7rem; /* Adjusted padding */
+        padding-right: 0.7rem; /* Adjusted padding */
+    }
+    .about-container h3 {
+        color: #007bff;
+        padding-left: 0.7rem; /* Adjusted padding */
+        padding-right: 0.7rem; /* Adjusted padding */
+        margin-bottom: 1rem;
+        font-size: 1.1em; /* Adjusted font-size */
+    }
+    .about-container table {
+        width: 95%;
+        border-collapse: collapse;
+        margin: 1rem auto;
+    }
+    .about-container th, .about-container td {
+        border: 1px solid #ccc;
+        padding: 6px; /* Adjusted padding */
+        text-align: left;
+        font-size: 0.85rem;
+    }
+    .about-container th {
+        background-color: #f0f0f0;
+        font-weight: 600;
+    }
+
+    .download-button {
+        display: inline-block;
+        background: linear-gradient(90deg, #28a745 0%, #218838 100%); /* Green gradient */
+        color: #fff;
+        padding: 0.6rem 1.2rem; /* Adjusted padding */
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin-top: 1rem; /* Adjusted margin */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .download-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script><script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script><script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script></head>
+<body>
+<div style="text-align:center; font-size: 38px; font-weight: bold; margin-top: 5px; margin-bottom: 15px; color: #fff;">AI Job Market Insights</div><nav>
+<button onclick="showCategory('aboutDataset')">About Dataset</button> <button onclick="showCategory('overview')">Overview</button>
+<button onclick="showCategory('salary')">Salary Insights</button>
+<button onclick="showCategory('benefits')">Benefits Insights</button>
+<button onclick="showCategory('skills')">Skills &amp; Education</button>
+<button onclick="showCategory('predictive')">Predictive Models</button>
+<button onclick="showCategory('locations')">Location Rankings</button>
+<button onclick="showCategory('recommendations')">Recommendations</button>
+</nav>
+<div class="category" id="overview">
+<h2>Overall Market Overview</h2>
+<div class="chart-buttons">
+<button onclick="showChart('jobCount')">Job Count by Title</button>
+<button onclick="showChart('locationDist')">Company Location Distribution</button>
+<button onclick="showChart('remoteRatioDist')">Remote Ratio Distribution</button>
+<button onclick="showChart('eduLevelDist')">Education Level Distribution</button>
+</div>
+<div class="chart-container" id="jobCount">
+<iframe src="job_count_by_title.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart illustrates the distribution of various job titles within the AI job market, providing a clear overview of the prevalence and demand for specific roles.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each horizontal bar represents a distinct job title. Its length, measured along the X-axis, indicates the count of job postings for that particular role.</li>
+                            <li>You can sort the job titles by the number of postings (in descending or ascending order) or alphabetically using the "Sort by" dropdown menu.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> This visualization helps you quickly identify high-demand positions, such as "Machine Learning Researcher" or "AI Software Engineer," which can guide your career choices or recruitment strategies. Understanding which roles are most frequent provides a foundational view of the market's current focus.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="locationDist">
+<iframe src="company_location_distribution.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart displays the geographical distribution of AI job opportunities, highlighting regions with significant hiring activity.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each bar represents a company's country or region of operation. Its length indicates the volume of job postings originating from that location.</li>
+                            <li>The "Sort by" dropdown allows you to arrange locations based on the number of job postings or alphabetically.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can pinpoint major AI hubs globally (e.g., Germany, Denmark, Canada), which is beneficial for relocation planning, market entry strategies, or understanding regional talent availability.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="remoteRatioDist">
+<iframe src="remote_ratio_distribution_colored.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart visualizes the breakdown of AI job postings by their remote work flexibility.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>0%: On-site (fully in-office).</li>
+                            <li>50%: Hybrid (mix of on-site and remote).</li>
+                            <li>100%: Fully Remote (work from anywhere).</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each bar indicates a remote ratio category. Its height represents the number of jobs available for that specific work model.</li>
+                            <li>Use the "Employment Type" and "Industry" filters to refine your analysis and observe how remote work options vary.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> This helps you understand the prevalence of different work models in the AI industry and provides valuable information on how remote work options may differ across specific employment types or industries.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="eduLevelDist">
+<iframe src="education_level_distribution.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart highlights the most frequently required educational qualifications for AI-related roles, offering insights into the academic expectations set by the industry.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>Bachelor: Bachelor's Degree.</li>
+                            <li>Master: Master's Degree.</li>
+                            <li>PhD: Doctor of Philosophy.</li>
+                            <li>Associate: Associate's Degree.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>The height of each bar corresponds to the number of job postings requiring a specific education level.</li>
+                            <li>Filters for "Employment Type" and "Industry" enable you to examine how educational demands vary in different contexts.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can discern the typical educational backgrounds expected for AI professionals, which is crucial information for academic and career planning to align with market requirements.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="salary">
+<h2>Salary Insights</h2>
+<div class="chart-buttons">
+<button onclick="showChart('salaryExpLevel')">Salary by Experience Level</button>
+<button onclick="showChart('salaryCompanySize')">Salary by Company Size</button>
+<button onclick="showChart('salaryRemoteRatio')">Salary by Remote Ratio</button>
+<button onclick="showChart('salaryYearsExp')">Years of Experience vs. Salary</button>
+<button onclick="showChart('avgSalaryTitle')">Avg Salary by Title</button>
+</div>
+<div class="chart-container" id="salaryExpLevel">
+<iframe src="salary_distribution_by_experience_level_filtered.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This box plot illustrates the typical salary ranges for various experience levels within the AI job market.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>EN: Entry-Level.</li>
+                            <li>MI: Mid-Level.</li>
+                            <li>SE: Senior-Level.</li>
+                            <li>EX: Executive-Level.</li>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each box represents an experience level. The central line within the box indicates the median salary, while the box itself spans the interquartile range (the middle 50% of salaries). The "whiskers" extend to show the overall data spread, excluding outliers.</li>
+                            <li>Use the "Employment Type" and "Industry" filters to explore specific salary variations.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can understand how compensation typically progresses with increasing experience and how salary ranges are influenced by different employment types or industry sectors. This is vital for setting realistic salary expectations as you advance in your career.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="salaryCompanySize">
+<iframe src="salary_company_size.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This box plot visualizes how average salaries vary across companies of different sizes within the AI industry.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>S: Small Company.</li>
+                            <li>M: Medium Company.</li>
+                            <li>L: Large Company.</li>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each box corresponds to a company size category, with the central line representing the median salary and the box indicating the middle 50% of salaries.</li>
+                            <li>Filters for "Employment Type" and "Industry" allow for more granular analysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can discern whether larger companies tend to offer higher compensation or if smaller organizations provide comparable salaries, which is valuable information when considering company scale during your job search.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="salaryRemoteRatio">
+<iframe src="salary_remote_ratio.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This box plot explores the relationship between salary levels and different remote work arrangements in AI roles.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>0: On-site.</li>
+                            <li>50: Hybrid.</li>
+                            <li>100: Remote.</li>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each box corresponds to a remote ratio category. Analyze the median and spread of salaries to determine if remote roles exhibit different pay structures compared to hybrid or on-site positions.</li>
+                            <li>Use the "Employment Type" and "Industry" filters for refined insights.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> This helps you understand if remote work status significantly impacts compensation, which is useful for salary negotiations or selecting your preferred work model.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="salaryYearsExp">
+<iframe src="salary_years_experience.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This scatter plot illustrates the correlation between a professional's years of experience and their corresponding salary in AI roles.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each data point represents a job posting. Its position on the X-axis reflects "Years of Experience," and on the Y-axis, "Salary in USD." Points are colored according to "Experience Level".</li>
+                            <li>Interactive filters for "Employment Type" and "Industry" are available, and you can zoom/pan the chart for closer inspection.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can observe salary progression over a career, identifying trends in pay increases with accumulating experience and how these trends may vary by job title, employment type, or industry. This visualizes the financial returns on professional development.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="avgSalaryTitle">
+<iframe src="job_titles_avg_salary.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This bar chart presents the average salaries for various AI-related job titles, enabling direct compensation comparisons across different roles.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>The length of each horizontal bar indicates the average salary for a specific job title.</li>
+                            <li>The bars feature a gradient color from yellow (lower average salary) to orange (higher average salary).</li>
+                            <li>Interactive filters for "Industry," "Company Size," and "Experience Level" allow for dynamic data analysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can swiftly identify the highest-paying AI roles and understand how average salaries for particular job titles fluctuate based on the industry they operate in, the company's size, or the required experience level. This is crucial for career planning and negotiation.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="benefits">
+<h2>Benefits Insights</h2>
+<div class="chart-buttons">
+<button onclick="showChart('avgBenefitsIndustry')">Average Benefits by Industry</button>
+</div>
+<div class="chart-container" id="avgBenefitsIndustry">
+<iframe src="avg_benefits_by_industry.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart visualizes the average benefits score offered across different industries within the AI job market.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>The length of each bar represents an industry's average benefits score. A higher score generally indicates better benefits quality.</li>
+                            <li>The bars display a gradient color from yellow (lower score) to orange (higher score).</li>
+                            <li>Interactive filters for "Company Size" and "Experience Level" allow for dynamic data analysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can determine which industries tend to provide more comprehensive benefits packages. This chart helps in evaluating overall compensation beyond just salary and understanding how benefits may correlate with company size or required experience level within different industries.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="skills">
+<h2>Skills &amp; Education</h2>
+<div class="chart-buttons">
+<button onclick="showChart('topRequiredSkills')">Top Required Skills</button>
+<button onclick="showChart('eduDist')">Education Level Distribution</button>
+<button onclick="showChart('topSkillsHighSalaries')">Top Skills for High Salaries</button>
+</div>
+<div class="chart-container" id="topRequiredSkills">
+<iframe src="top_required_skills.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart highlights the most frequently required skills in AI job postings, providing insight into the technical proficiencies in highest demand.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>The length of each bar indicates the count of job postings listing a specific skill.</li>
+                            <li>The bars are colored with a gradient from yellow (lower frequency) to orange (higher frequency).</li>
+                            <li>Interactive filters for "Industry," "Remote Type," "Company Size," and a "Top N Skills" slider enable dynamic exploration.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can identify critical skills for career advancement in AI. This helps in prioritizing skill development based on current market needs and observing how demand varies across different job attributes.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="eduDist">
+<iframe src="education_level_distribution.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart illustrates the most frequently required educational qualifications for AI roles, offering insights into industry academic expectations.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>Master: Master's Degree.</li>
+                            <li>Bachelor: Bachelor's Degree.</li>
+                            <li>PhD: Doctor of Philosophy.</li>
+                            <li>Associate: Associate's Degree.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>The height of each bar corresponds to the number of job postings requiring a specific education level.</li>
+                            <li>Filters for "Employment Type" and "Industry" enable you to examine variations in educational demands.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can discern typical educational backgrounds expected for AI professionals, informing academic and career planning.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="topSkillsHighSalaries">
+<iframe src="top_skills_high_salaries.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart identifies the skills most frequently associated with higher salaries in the AI job market.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each bar represents a specific skill, and its length reflects the average salary for jobs requiring that skill.</li>
+                            <li>The bars use a yellow (lower average salary) to orange (higher average salary) gradient.</li>
+                            <li>You can use filters for "Employment Type," "Industry," and a "Top N Skills" slider to refine your analysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can pinpoint skills that are financially rewarding in AI. This visualization is crucial for professionals seeking to maximize their earning potential by focusing on relevant high-value skills.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="predictive">
+<h2>Predictive Models</h2>
+<div class="chart-buttons">
+<button onclick="showChart('salaryPred')">Predicted vs Actual Salary</button>
+<button onclick="showChart('benefitsPred')">Benefits Score Prediction</button>
+<button onclick="showChart('remoteRatioPred')">Remote Ratio Prediction</button>
+</div>
+<div class="chart-container" id="salaryPred">
+<iframe src="predicted_vs_actual_salary.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This scatter plot assesses the accuracy of a regression model trained to predict salaries based on various job attributes.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>R-squared: A statistical measure (ranging from 0 to 1) representing the proportion of the variance in the dependent variable (salary) that is predictable from the independent variables (job features). A higher R-squared indicates a better fit of the model to the data.</li>
+                            <li>USD: United States Dollar.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each dot represents a job posting. The X-axis shows the "Actual Salary," while the Y-axis shows the "Predicted Salary" by the model.</li>
+                            <li>The red dashed line signifies "Perfect Prediction," where predicted values exactly match actual values.</li>
+                            <li>Use the "Experience Level," "Company Size," and "Industry" filters to analyze model performance for specific data segments.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can evaluate the model's predictive reliability. Dots clustered closely around the red line indicate accurate predictions, while significant deviations highlight areas where the model may be less precise or where unexpected salary trends exist. This helps in understanding the factors influencing salary predictability.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="benefitsPred">
+<iframe src="benefits_score_prediction.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This scatter plot evaluates the performance of a regression model designed to predict benefits scores using various job features.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>R-squared: A statistical measure (ranging from 0 to 1) indicating how well the model predicts the benefits score based on the input features.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each dot represents a job posting, with its actual benefits score on the X-axis and the model's predicted score on the Y-axis.</li>
+                            <li>The red dashed line indicates "Perfect Prediction".</li>
+                            <li>Interactive filters for "Job Title," "Company Size," and "Experience Level" allow you to analyze predictions for different job attributes.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can understand the reliability of benefits score predictions. This helps in estimating the non-salary compensation component of a role and identifying job characteristics that strongly influence benefits scores according to the model.</li>
+                </ul>
+            </div>
+</div>
+<div class="chart-container" id="remoteRatioPred">
+<iframe src="remote_ratio_prediction.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This scatter plot visualizes the accuracy of a regression model designed to predict the remote work ratio of AI job postings.</li>
+                    <li><strong>Abbreviations:</strong>
+                        <ul>
+                            <li>R-squared: A statistical measure (ranging from 0 to 1) representing the proportion of the variance in the remote ratio that is predictable from the independent variables.</li>
+                            <li>0: On-site.</li>
+                            <li>50: Hybrid.</li>
+                            <li>100: Remote.</li>
+                            <li>FT: Full-time.</li>
+                            <li>PT: Part-time.</li>
+                            <li>CT: Contract.</li>
+                            <li>FL: Freelance.</li>
+                        </ul>
+                    </li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each dot represents a job posting, showing its "Actual Remote Ratio" (X-axis) versus the model's "Predicted Remote Ratio" (Y-axis).</li>
+                            <li>The red dashed line indicates "Perfect Prediction."</li>
+                            <li>Filters for "Employment Type," "Industry," "Company Size," and "Experience Level" allow you to investigate model performance across different job attributes.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can evaluate how well the model predicts remote work flexibility. Observe if predictions cluster accurately around 0, 50, or 100, and identify features that strongly influence remote work options according to the model.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="locations">
+<h2>Location Rankings</h2>
+<div class="chart-buttons">
+<button onclick="showChart('bestLocationsChart')">Best Locations by Metric</button>
+</div>
+<div class="chart-container" id="bestLocationsChart">
+<iframe src="best_locations_chart.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This interactive chart helps you identify the "best" locations for AI jobs based on your chosen criteria: highest average salary, most job postings, or best average benefits score.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Use the "Define 'Best' by" dropdown to select your preferred metric. The bars will dynamically re-sort and resize, showing the top locations for that metric. The X-axis and color gradient will also update accordingly.</li>
+                            <li>Hover over a bar to view all three metrics (average salary, total job count, and average benefits score) for that specific location.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can swiftly pinpoint cities or countries that excel in specific aspects of the AI job market. This is invaluable for strategic job searching, relocation planning, or identifying competitive markets for hiring.</li>
+                </ul>
+            </div>
+</div>
+</div>
+<div class="category" id="recommendations">
+<h2>Recommendations</h2>
+<div class="chart-buttons">
+<button onclick="showChart('topSkillsRec')">Top Skills for High Salaries</button>
+</div>
+<div class="chart-container" id="topSkillsRec">
+<iframe src="top_skills_high_salaries.html"></iframe>
+<div class="description">
+                <ul>
+                    <li><strong>Purpose:</strong> This chart identifies skills highly correlated with above-average salaries in the AI sector, guiding your professional development.</li>
+                    <li><strong>How to Interpret:</strong>
+                        <ul>
+                            <li>Each bar represents a specific skill, and its length reflects the average salary for jobs requiring that skill.</li>
+                            <li>The bars use a yellow (lower average salary) to orange (higher average salary) gradient.</li>
+                            <li>You can use filters for "Employment Type," "Industry," and a "Top N Skills" slider to refine your analysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Key Insights:</strong> You can pinpoint skills that offer significant financial returns in AI. This visualization is crucial for professionals seeking to maximize their earning potential by focusing on relevant high-value skills.</li>
+                </ul>
+            </div>
+</div>
+
+</div>
+<div class="category" id="aboutDataset"> <h2>About the Dataset</h2>
+<div class="about-container active">
+    <p>The <strong>AI & Data Job Salaries and Skills Dataset 2024-2025</strong> is synthetically prepared and provides a detailed, global overview of job listings in artificial intelligence, data science, machine learning, and related fields. This dataset aggregates job postings from October 2024 to July 2025, capturing a wide spectrum of roles, required skills, compensation, and organizational attributes across multiple countries and industries.</p>
+    <p>With over 15,000 entries, each record details the job title, salary (in USD and local currency), experience level, employment type, company location and size, remote work ratio, required technical skills, education and experience requirements, industry, posting and application dates, job description length, benefits score, and company name.</p>
+    <p>This rich dataset is designed for data scientists, career analysts, HR professionals, and researchers interested in AI workforce trends, salary benchmarking, and skills demand analysis.</p>
+
+    <h3>Short Form Usage</h3>
+    <ul>
+        <li><strong>Experience Level:</strong> EN (Entry), MI (Mid), SE (Senior), EX (Executive).</li>
+        <li><strong>Employment Type:</strong> FT (Full-time), PT (Part-time), CT (Contract), FL (Freelance).</li>
+        <li><strong>Company Size:</strong> S (Small), M (Medium), L (Large).</li>
+        <li><strong>Remote Ratio:</strong> 0 (On-site), 50 (Hybrid), 100 (Remote).</li>
+    </ul>
+
+    <h3>Column Details</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Column Name</th>
+                <th>Description</th>
+                <th>Example Values</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>job_id</td><td>Unique identifier for each job posting</td><td>AI00001, AI00002</td></tr>
+            <tr><td>job_title</td><td>Title/role advertised</td><td>AI Research Scientist, Data Analyst</td></tr>
+            <tr><td>salary_usd</td><td>Annual salary converted to USD</td><td>90376, 124355</td></tr>
+            <tr><td>salary_currency</td><td>Currency in which salary is offered</td><td>USD, EUR, GBP</td></tr>
+            <tr><td>experience_level</td><td>Level of experience required (EN=Entry, MI=Mid, SE=Senior, EX=Executive)</td><td>SE, EN, MI, EX</td></tr>
+            <tr><td>employment_type</td><td>Contract type (CT=Contract, FT=Full-time, PT=Part-time, FL=Freelance)</td><td>FT, PT, CT, FL</td></tr>
+            <tr><td>company_location</td><td>Country where the company is based</td><td>China, Canada, Germany</td></tr>
+            <tr><td>company_size</td><td>Company size (S=Small, M=Medium, L=Large)</td><td>S, M, L</td></tr>
+            <tr><td>employee_residence</td><td>Country of employee residence</td><td>China, Ireland, Singapore</td></tr>
+            <tr><td>remote_ratio</td><td>% of remote work allowed (0=Onsite, 50=Hybrid, 100=Remote)</td><td>0, 50, 100</td></tr>
+            <tr><td>required_skills</td><td>Key technical skills required (comma-separated)</td><td>Python, SQL, Tableau, Docker</td></tr>
+            <tr><td>education_required</td><td>Minimum education level required</td><td>Bachelor, Master, PhD, Associate</td></tr>
+            <tr><td>years_experience</td><td>Minimum years of experience required</td><td>0, 4, 9, 15</td></tr>
+            <tr><td>industry</td><td>Industry sector of the job</td><td>Automotive, Media, Healthcare</td></tr>
+            <tr><td>posting_date</td><td>Date when the job was posted (YYYY-MM-DD)</td><td>2024-10-18</td></tr>
+            <tr><td>application_deadline</td><td>Last date to apply for the job (YYYY-MM-DD)</td><td>2024-11-07</td></tr>
+            <tr><td>job_description_length</td><td>Length of job description in characters</td><td>1076, 2340</td></tr>
+            <tr><td>benefits_score</td><td>Numeric score (0-10) reflecting benefits quality</td><td>5.9, 9.4</td></tr>
+            <tr><td>company_name</td><td>Name of the hiring company</td><td>Smart Analytics, TechCorp Inc</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Key Features</h3>
+    <ul>
+        <li><strong>Global Coverage:</strong> Jobs span North America, Europe, Asia, and beyond.</li>
+        <li><strong>Comprehensive Role Types:</strong> Includes AI researchers, ML engineers, data analysts, product managers, and more.</li>
+        <li><strong>Salary Benchmarking:</strong> Salaries in USD and local currencies, with company size and location context.</li>
+        <li><strong>Skills Mapping:</strong> Tracks in-demand skills (Python, SQL, NLP, cloud, MLOps, etc.) for each role.</li>
+        <li><strong>Remote Work Insights:</strong> Quantifies remote/hybrid/onsite opportunities.</li>
+        <li><strong>Education &amp; Experience:</strong> Minimum qualifications and years of experience required.</li>
+        <li><strong>Industry Trends:</strong> Sector-wise breakdown for cross-industry analysis.</li>
+    </ul>
+
+    <h3>Use Cases</h3>
+    <ul>
+        <li><strong>Salary Analysis:</strong> Benchmark compensation across roles, countries, and industries.</li>
+        <li><strong>Skills Demand:</strong> Identify trending and essential skills for AI/data roles.</li>
+        <li><strong>Workforce Planning:</strong> Guide talent acquisition, upskilling, and organizational strategy.</li>
+        <li><strong>Career Research:</strong> Inform job seekers about requirements and market trends.</li>
+        <li><strong>Visualization &amp; Modeling:</strong> Ideal for EDA, dashboards, and predictive analytics.</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="ai_job_dataset.xlsx" download="ai_job_dataset.xlsx" class="download-button">Download Dataset (Excel)</a>
+    </div>
+</div>
+</div>
+<script>
+    function showCategory(id) {
+      document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      // Hide all chart/about containers when a new category is shown
+      document.querySelectorAll('.chart-container, .about-container').forEach(container => container.classList.remove('active'));
+
+      // If the category is 'aboutDataset', just show the about-container
+      if (id === 'aboutDataset') {
+          const aboutContainer = document.getElementById(id).querySelector('.about-container');
+          if (aboutContainer) {
+              aboutContainer.classList.add('active');
+          }
+      } else {
+          // For other categories, show the first chart
+          const firstChartButtonInNewCategory = document.getElementById(id).querySelector('.chart-buttons button');
+          if (firstChartButtonInNewCategory && firstChartButtonInNewCategory.onclick) {
+              const chartIdMatch = firstChartButtonInNewCategory.onclick.toString().match(/showChart\('([^']+)'\)/);
+              if (chartIdMatch && chartIdMatch[1]) {
+                  showChart(chartIdMatch[1]);
+              }
+          }
+      }
+    }
+
+    function showChart(id) {
+      document.querySelectorAll('.chart-container, .about-container').forEach(container => container.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Initialize: Show the first category and its first chart on load
+    document.addEventListener('DOMContentLoaded', () => {
+        showCategory('aboutDataset'); // Activate the 'About Dataset' category by default
+    });
+  </script>
+</body>
+</html>
