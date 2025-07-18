@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-d127150c1c45882cdc5ead4fee778587"}, "mark": {"type": "bar"}, "encoding": {"color": {"field": "count", "legend": {"title": "Job Count"}, "scale": {"range": ["#F9A01B", "#E55F20"]}, "type": "quantitative"}, "tooltip": [{"field": "job_title", "type": "nominal"}, {"field": "count", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "job_title", "sort": {"field": "final_sort_order", "op": "min", "order": "ascending"}, "title": "Job Title", "type": "nominal"}, "y": {"field": "count", "title": "Job Count", "type": "quantitative"}}, "params": [{"name": "sort_by", "bind": {"input": "select", "options": ["Descending Count", "Ascending Count", "Alphabetical (A-Z)", "Alphabetical (Z-A)"], "name": "Sort by: "}, "value": "Descending Count"}], "title": "Job Count by Title", "transform": [{"window": [{"op": "rank", "field": "", "as": "alpha_rank_az"}], "sort": [{"field": "job_title", "order": "ascending"}]}, {"window": [{"op": "rank", "field": "", "as": "alpha_rank_za"}], "sort": [{"field": "job_title", "order": "descending"}]}, {"window": [{"op": "rank", "field": "", "as": "asc_count_rank"}], "sort": [{"field": "count", "order": "ascending"}]}, {"window": [{"op": "rank", "field": "", "as": "desc_count_rank"}], "sort": [{"field": "count", "order": "descending"}]}, {"calculate": "if(sort_by === 'Alphabetical (A-Z)', datum.alpha_rank_az, if(sort_by === 'Alphabetical (Z-A)', datum.alpha_rank_za, if(sort_by === 'Descending Count', datum.desc_count_rank, datum.asc_count_rank)))", "as": "final_sort_order"}], "width": 1000, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-d127150c1c45882cdc5ead4fee778587": [{"job_title": "Machine Learning Researcher", "count": 808}, {"job_title": "AI Software Engineer", "count": 784}, {"job_title": "Autonomous Systems Engineer", "count": 777}, {"job_title": "Machine Learning Engineer", "count": 772}, {"job_title": "AI Architect", "count": 771}, {"job_title": "Head of AI", "count": 765}, {"job_title": "NLP Engineer", "count": 762}, {"job_title": "Robotics Engineer", "count": 759}, {"job_title": "Data Analyst", "count": 759}, {"job_title": "AI Research Scientist", "count": 756}, {"job_title": "Data Engineer", "count": 749}, {"job_title": "AI Product Manager", "count": 743}, {"job_title": "Research Scientist", "count": 742}, {"job_title": "Principal Data Scientist", "count": 734}, {"job_title": "AI Specialist", "count": 728}, {"job_title": "ML Ops Engineer", "count": 725}, {"job_title": "Computer Vision Engineer", "count": 724}, {"job_title": "Data Scientist", "count": 720}, {"job_title": "Deep Learning Engineer", "count": 718}, {"job_title": "AI Consultant", "count": 704}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

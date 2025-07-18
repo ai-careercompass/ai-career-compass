@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-b06f4f089e99dff2820beac23878232d"}, "mark": {"type": "bar"}, "encoding": {"color": {"field": "count", "legend": {"title": "Job Count"}, "scale": {"range": ["#F9A01B", "#E55F20"]}, "type": "quantitative"}, "tooltip": [{"field": "company_location", "type": "nominal"}, {"field": "count", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "company_location", "sort": {"field": "final_location_sort_order", "op": "min", "order": "ascending"}, "title": "Company Location", "type": "nominal"}, "y": {"field": "count", "title": "Job Count", "type": "quantitative"}}, "params": [{"name": "location_sort_by", "bind": {"input": "select", "options": ["Descending Count", "Ascending Count", "Alphabetical (A-Z)", "Alphabetical (Z-A)"], "name": "Sort by: "}, "value": "Descending Count"}], "title": "Company Location Distribution", "transform": [{"window": [{"op": "rank", "field": "", "as": "alpha_rank_az"}], "sort": [{"field": "company_location", "order": "ascending"}]}, {"window": [{"op": "rank", "field": "", "as": "alpha_rank_za"}], "sort": [{"field": "company_location", "order": "descending"}]}, {"window": [{"op": "rank", "field": "", "as": "asc_count_rank"}], "sort": [{"field": "count", "order": "ascending"}]}, {"window": [{"op": "rank", "field": "", "as": "desc_count_rank"}], "sort": [{"field": "count", "order": "descending"}]}, {"calculate": "if(location_sort_by === 'Alphabetical (A-Z)', datum.alpha_rank_az, if(location_sort_by === 'Alphabetical (Z-A)', datum.alpha_rank_za, if(location_sort_by === 'Descending Count', datum.desc_count_rank, datum.asc_count_rank)))", "as": "final_location_sort_order"}], "width": 1000, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-b06f4f089e99dff2820beac23878232d": [{"company_location": "Germany", "count": 814}, {"company_location": "Denmark", "count": 778}, {"company_location": "Canada", "count": 769}, {"company_location": "France", "count": 769}, {"company_location": "Austria", "count": 765}, {"company_location": "Singapore", "count": 764}, {"company_location": "China", "count": 763}, {"company_location": "India", "count": 754}, {"company_location": "Sweden", "count": 752}, {"company_location": "Israel", "count": 751}, {"company_location": "Ireland", "count": 750}, {"company_location": "Switzerland", "count": 746}, {"company_location": "Japan", "count": 733}, {"company_location": "Finland", "count": 733}, {"company_location": "Australia", "count": 732}, {"company_location": "Netherlands", "count": 731}, {"company_location": "United Kingdom", "count": 729}, {"company_location": "United States", "count": 724}, {"company_location": "South Korea", "count": 722}, {"company_location": "Norway", "count": 721}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
