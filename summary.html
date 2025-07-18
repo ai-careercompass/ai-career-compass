@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Job Market Summary Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="dashboard_styles.css"> <style>
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(120deg, #2a1157 0%, #4e2c7a 60%, #7a3e8e 100%);
+        background-image: linear-gradient(120deg, rgba(42,17,87,0.97) 0%, rgba(78,44,122,0.92) 60%, rgba(122,62,142,0.32) 100%), url("NEW_BG (1).png"); /* Ensure NEW_BG (1).png exists */
+        background-size: cover, cover;
+        background-repeat: no-repeat, no-repeat;
+        background-position: center, center;
+        color: #fff;
+        min-height: 100vh;
+        padding: 1.5rem; /* Reduced body padding */
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        font-size: 2.5em; /* Slightly smaller header */
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 1.5rem; /* Reduced header margin */
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjusted min column width for better filling */
+        grid-auto-rows: minmax(130px, auto); /* Reduced min row height */
+        gap: 1rem; /* Reduced gap between grid items */
+        width: 100%;
+        max-width: 1200px; /* Adjusted max width for the grid */
+        padding: 1rem; /* Reduced grid padding */
+        background: rgba(255, 255, 255, 0.08); /* Slightly transparent background for the grid area */
+        backdrop-filter: blur(8px);
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .grid-item {
+        background: rgba(255, 255, 255, 0.15); /* Item background */
+        backdrop-filter: blur(15px);
+        border-radius: 12px;
+        padding: 0.8rem; /* Reduced item padding */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Kept hover transition */
+        position: relative;
+        overflow: hidden;
+    }
+
+    .grid-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    }
+
+    /* KPI Specific Styling */
+    .kpi-box {
+        background: linear-gradient(135deg, #ff9a47 0%, #ffa033 100%); /* Orange gradient for KPIs */
+        color: #333; /* Dark text for contrast */
+        font-size: 1em; /* Adjusted base font size */
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .kpi-box .label {
+        font-size: 0.75em; /* Adjusted label font size */
+        opacity: 0.8;
+        margin-bottom: 0.2rem; /* Reduced label margin */
+        color: #555; /* Default color for KPI box labels */
+    }
+    .kpi-box .value {
+        font-size: 1.8em; /* Adjusted value font size */
+        font-weight: bold;
+        color: #222;
+        line-height: 1.2;
+    }
+
+    /* Remote/Onsite Distribution Specific Styling (Text color updated here) */
+    .kpi-remote-dist {
+        align-items: flex-start;
+        text-align: left;
+    }
+    .kpi-remote-dist h4 {
+        margin: 0.4rem 0; /* Reduced margin */
+        color: #ffffff; /* Changed to white for readability */
+        font-size: 1em; /* Adjusted font size */
+    }
+    .kpi-remote-dist .value-row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 0.4rem; /* Reduced margin */
+    }
+    .kpi-remote-dist .value-row .label {
+        font-size: 0.85em; /* Adjusted font size */
+        color: #ffffff; /* Changed to white for readability */
+    }
+    .kpi-remote-dist .value-row .value {
+        font-size: 1.1em; /* Adjusted font size */
+    }
+
+    /* Grid span classes (for different box sizes) */
+    .span-2-col { grid-column: span 2; }
+    .span-2-row { grid-row: span 2; }
+    .span-3-col { grid-column: span 3; }
+    .span-4-col { grid-column: span 4; }
+
+    /* Custom sizing for specific KPIs (Adjusted font sizes here for impact) */
+    .kpi-total-jobs { grid-column: span 2; font-size: 1.3em; }
+    .kpi-avg-salary { grid-column: span 2; font-size: 1.3em; }
+    .kpi-top-location { grid-column: span 2; font-size: 1.1em; }
+    .kpi-top-location .value { font-size: 1.5em; }
+    .kpi-salary-range { grid-column: span 2; }
+    .kpi-salary-range .value { font-size: 1.5em; }
+    .kpi-remote-dist { grid-column: span 2; grid-row: span 2; }
+
+
+    /* Navigation Buttons at the bottom */
+    .dashboard-nav-buttons {
+        margin-top: 2rem; /* Reduced margin */
+        display: flex;
+        gap: 1rem; /* Reduced gap */
+        justify-content: center;
+    }
+    .dashboard-nav-buttons a {
+        padding: 0.7rem 1.4rem; /* Adjusted padding */
+        background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%); /* Orange gradient for all buttons */
+        color: #000; /* Dark text for contrast */
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dashboard-nav-buttons a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Add custom styling for the "About Dataset" link if it exists separately from main nav */
+    .grid-item a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .grid-item a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 767px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        .span-2-col, .span-3-col, .span-4-col, .kpi-total-jobs, .kpi-avg-salary, .kpi-top-location, .kpi-salary-range, .kpi-remote-dist {
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+        .kpi-remote-dist {
+            align-items: center;
+            text-align: center;
+        }
+        .kpi-remote-dist .value-row {
+            flex-direction: column;
+            align-items: center;
+        }
+        .kpi-box .value { font-size: 1.5em; }
+        .kpi-total-jobs .value { font-size: 2em; }
+        .kpi-avg-salary .value { font-size: 2em; }
+        .kpi-salary-range .value { font-size: 1.2em; }
+        .kpi-top-location .value { font-size: 1.2em; }
+        .kpi-remote-dist h4 { font-size: 0.9em; }
+        .kpi-remote-dist .value-row .label { font-size: 0.75em; }
+        .kpi-remote-dist .value-row .value { font-size: 1em; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .span-md-2-col { grid-column: span 2; }
+        .span-md-2-row { grid-row: span 2; }
+        .kpi-total-jobs { grid-column: span 2; }
+        .kpi-avg-salary { grid-column: span 2; }
+        .kpi-top-location { grid-column: span 2; }
+        .kpi-remote-dist { grid-column: span 2; grid-row: span 2; }
+        .kpi-salary-range { grid-column: span 2; }
+    }
+    @media (min-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .span-lg-2-col { grid-column: span 2; }
+        .span-lg-2-row { grid-row: span 2; }
+        .span-lg-3-col { grid-column: span 3; }
+        .span-lg-4-col { grid-column: span 4; }
+        .kpi-total-jobs { grid-column: span 2; }
+        .kpi-avg-salary { grid-column: span 2; }
+        .kpi-top-location { grid-column: span 2; }
+        .kpi-remote-dist { grid-column: span 2; grid-row: span 2; }
+        .kpi-salary-range { grid-column: span 2; }
+    }
+</style>
+</head>
+<body>
+
+<div class="dashboard-header">AI Job Market Summary Dashboard</div>
+
+<div class="dashboard-grid">
+
+    <div class="grid-item kpi-box kpi-total-jobs">
+        <div class="label">Total Job Postings</div>
+        <div class="value">15,000</div>
+    </div>
+    <div class="grid-item kpi-box kpi-avg-salary">
+        <div class="label">Avg. Overall Salary (USD)</div>
+        <div class="value">$115,349</div>
+    </div>
+    <div class="grid-item kpi-box">
+        <div class="label">Unique Job Titles</div>
+        <div class="value">20</div>
+    </div>
+    <div class="grid-item kpi-box">
+        <div class="label">Unique Companies</div>
+        <div class="value">16</div>
+    </div>
+    <div class="grid-item kpi-box kpi-top-location">
+        <div class="label">Top Company Location (by jobs)</div>
+        <div class="value">Germany (814 jobs)</div>
+    </div>
+
+    <div class="grid-item kpi-box kpi-salary-range">
+        <div class="label">Median Overall Salary</div>
+        <div class="value">$99,705</div>
+        <div class="label" style="margin-top: 0.5rem;">Salary Range</div>
+        <div class="value" style="font-size: 1.3em;">$32,519 - $399,095</div>
+    </div>
+    <div class="grid-item kpi-box">
+        <div class="label">Avg. Benefits Score</div>
+        <div class="value">7.5/10</div>
+    </div>
+    <div class="grid-item kpi-box">
+        <div class="label">Avg. Years Experience</div>
+        <div class="value">6.3 years</div>
+    </div>
+
+
+    <div class="grid-item kpi-box kpi-remote-dist">
+        <h4>Remote Work Distribution</h4>
+        <div class="value-row">
+            <div class="label">Fully Remote:</div> <div class="value">32.8%</div>
+        </div>
+        <div class="value-row">
+            <div class="label">Hybrid:</div> <div class="value">33.4%</div>
+        </div>
+        <div class="value-row">
+            <div class="label">On-site:</div> <div class="value">33.8%</div>
+        </div>
+    </div>
+
+    <div class="grid-item kpi-box kpi-remote-dist">
+        <h4>Avg. Salary by Remote Type</h4>
+        <div class="value-row">
+            <div class="label">Remote:</div> <div class="value">$116,161</div>
+        </div>
+        <div class="value-row">
+            <div class="label">Hybrid:</div> <div class="value">$115,777</div>
+        </div>
+        <div class="value-row">
+            <div class="label">On-site:</div> <div class="value">$114,140</div>
+        </div>
+    </div>
+
+
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Avg. Job Desc. Length</div>
+        <div class="value">1,503 chars</div>
+    </div>
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Most Common Exp. Level</div>
+        <div class="value">MI (25.2%)</div>
+    </div>
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Most Common Education</div>
+        <div class="value">Bachelor (25.3%)</div>
+    </div>
+
+    <div class="grid-item kpi-box">
+        <div class="label">Total Unique Skills</div>
+        <div class="value">24</div>
+    </div>
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Top Skill</div>
+        <div class="value">Python (4,450 jobs)</div>
+    </div>
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Most Common Emp. Type</div>
+        <div class="value">FT (25.4%)</div>
+    </div>
+    <div class="grid-item kpi-box kpi-common-attr">
+        <div class="label">Top Industry</div>
+        <div class="value">Retail (1,063 jobs)</div>
+    </div>
+
+    <div class="grid-item kpi-box">
+        <div class="label">Remote-Friendly Countries</div>
+        <div class="value">20</div>
+    </div>
+
+
+</div>
+
+<div class="dashboard-nav-buttons">
+    <a href="homepage.html" class="detail-link">Back to Homepage</a> <a href="dashboard.html" class="detail-link">View Detailed Insights Dashboard</a>
+</div>
+
+</body>
+</html>
