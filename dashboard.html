@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>AI Job Market Insights Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<title>AI Job Market Insights Detailed Dashboard</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="dashboard_styles.css">
 <style>
     body {
@@ -22,6 +21,33 @@
       line-height: 1.6; /* Adjusted line height */
     }
 
+    /* New styles for navigation buttons at the top - Not used here, main nav is center */
+    .top-nav-buttons {
+        display: flex;
+        justify-content: flex-end; /* Align to the right */
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        max-width: 1200px; /* Match main content width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .top-nav-buttons a {
+        background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%);
+        color: #000;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease;
+    }
+    .top-nav-buttons a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+
     nav {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
@@ -32,6 +58,26 @@
       justify-content: center;
       margin-bottom: 2rem;
     }
+
+    /* Style for the new Back to Homepage button within nav */
+    .nav-homepage-button {
+        background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%);
+        color: #000;
+        padding: 0.5rem 1rem; /* Match other nav buttons */
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        text-decoration: none; /* Ensure it looks like a button, not a link */
+        display: flex; /* Allow content to be centered if arrow + text */
+        align-items: center;
+        justify-content: center;
+    }
+    .nav-homepage-button:hover {
+        transform: scale(1.05);
+    }
+
 
     nav button {
       background: linear-gradient(90deg, #ff9a47 0%, #ffa033 100%);
@@ -187,7 +233,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vega@5"></script><script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script><script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script></head>
 <body>
 <div style="text-align:center; font-size: 38px; font-weight: bold; margin-top: 5px; margin-bottom: 15px; color: #fff;">AI Job Market Insights</div><nav>
-<button onclick="showCategory('aboutDataset')">About Dataset</button> <button onclick="showCategory('overview')">Overview</button>
+<a href="homepage.html" class="nav-homepage-button">&lt;</a> <button onclick="showCategory('aboutDataset')">About Dataset</button>
+<button onclick="showCategory('overview')">Overview</button>
 <button onclick="showCategory('salary')">Salary Insights</button>
 <button onclick="showCategory('benefits')">Benefits Insights</button>
 <button onclick="showCategory('skills')">Skills &amp; Education</button>
@@ -195,7 +242,7 @@
 <button onclick="showCategory('locations')">Location Rankings</button>
 <button onclick="showCategory('recommendations')">Recommendations</button>
 </nav>
-<div class="category" id="overview">
+<div class="category active" id="overview">
 <h2>Overall Market Overview</h2>
 <div class="chart-buttons">
 <button onclick="showChart('jobCount')">Job Count by Title</button>
@@ -207,14 +254,9 @@
 <iframe src="job_count_by_title.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This chart illustrates the distribution of various job titles within the AI job market, providing a clear overview of the prevalence and demand for specific roles.</li>
-                    <li><strong>How to Interpret:</strong>
-                        <ul>
-                            <li>Each horizontal bar represents a distinct job title. Its length, measured along the X-axis, indicates the count of job postings for that particular role.</li>
-                            <li>You can sort the job titles by the number of postings (in descending or ascending order) or alphabetically using the "Sort by" dropdown menu.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Key Insights:</strong> This visualization helps you quickly identify high-demand positions, such as "Machine Learning Researcher" or "AI Software Engineer," which can guide your career choices or recruitment strategies. Understanding which roles are most frequent provides a foundational view of the market's current focus.</li>
+                    <li><strong>Purpose:</strong> This chart illustrates the distribution of various job titles within the AI market, providing a clear overview of the prevalence and demand for specific roles.</li>
+                    <li><strong>How to Interpret:</strong> Observe the length of each bar, which corresponds to the number of job postings for a given title. You can reorder the titles by count (descending/ascending) or alphabetically using the "Sort by" dropdown menu.</li>
+                    <li><strong>Key Insights:</strong> This visualization helps you quickly identify high-demand positions, such as "Machine Learning Researcher" or "AI Software Engineer," guiding career choices or recruitment strategies. Understanding which roles are most frequent provides a foundational view of the market's current focus.</li>
                 </ul>
             </div>
 </div>
@@ -225,7 +267,7 @@
                     <li><strong>Purpose:</strong> This chart displays the geographical distribution of AI job opportunities, highlighting regions with significant hiring activity.</li>
                     <li><strong>How to Interpret:</strong>
                         <ul>
-                            <li>Each bar represents a company's country or region of operation. Its length indicates the volume of job postings originating from that location.</li>
+                            <li>Each bar represents a company's country or region of operation. Its length indicates the volume of job postings from that area.</li>
                             <li>The "Sort by" dropdown allows you to arrange locations based on the number of job postings or alphabetically.</li>
                         </ul>
                     </li>
@@ -237,7 +279,7 @@
 <iframe src="remote_ratio_distribution_colored.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This chart visualizes the breakdown of AI job postings by their remote work flexibility.</li>
+                    <li><strong>Purpose:</strong> This chart visualizes the breakdown of AI job postings by their remote work flexibility (0% for on-site, 50% for hybrid, 100% for fully remote).</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
                             <li>0%: On-site (fully in-office).</li>
@@ -263,7 +305,7 @@
 <iframe src="education_level_distribution.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This chart highlights the most frequently required educational qualifications for AI-related roles, offering insights into the academic expectations set by the industry.</li>
+                    <li><strong>Purpose:</strong> This chart highlights the most frequently required educational qualifications for AI roles, offering insights into industry academic expectations.</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
                             <li>Bachelor: Bachelor's Degree.</li>
@@ -279,10 +321,10 @@
                     <li><strong>How to Interpret:</strong>
                         <ul>
                             <li>The height of each bar corresponds to the number of job postings requiring a specific education level.</li>
-                            <li>Filters for "Employment Type" and "Industry" enable you to examine how educational demands vary in different contexts.</li>
+                            <li>Filters for "Employment Type" and "Industry" enable you to examine variations in educational demands.</li>
                         </ul>
                     </li>
-                    <li><strong>Key Insights:</strong> You can discern the typical educational backgrounds expected for AI professionals, which is crucial information for academic and career planning to align with market requirements.</li>
+                    <li><strong>Key Insights:</strong> You can discern typical educational backgrounds expected for AI professionals, informing academic and career planning to align with market requirements.</li>
                 </ul>
             </div>
 </div>
@@ -300,7 +342,7 @@
 <iframe src="salary_distribution_by_experience_level_filtered.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This box plot illustrates the typical salary ranges for various experience levels within the AI job market.</li>
+                    <li><strong>Purpose:</strong> This box plot illustrates the typical salary ranges for various experience levels (Entry-Level, Mid-Level, Senior-Level, Executive-Level) within the AI job market.</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
                             <li>EN: Entry-Level.</li>
@@ -316,7 +358,7 @@
                     </li>
                     <li><strong>How to Interpret:</strong>
                         <ul>
-                            <li>Each box represents an experience level. The central line within the box indicates the median salary, while the box itself spans the interquartile range (the middle 50% of salaries). The "whiskers" extend to show the overall data spread, excluding outliers.</li>
+                            <li>Each box represents an experience level. The central line within the box indicates the median salary, while the box itself spans the interquartile range (the middle 50% of salaries). The "whiskers" indicate the overall data spread (excluding outliers).</li>
                             <li>Use the "Employment Type" and "Industry" filters to explore specific salary variations.</li>
                         </ul>
                     </li>
@@ -328,7 +370,7 @@
 <iframe src="salary_company_size.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This box plot visualizes how average salaries vary across companies of different sizes within the AI industry.</li>
+                    <li><strong>Purpose:</strong> This box plot visualizes how average salaries vary across companies of different sizes (Small, Medium, Large) within the AI industry.</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
                             <li>S: Small Company.</li>
@@ -347,7 +389,7 @@
                             <li>Filters for "Employment Type" and "Industry" allow for more granular analysis.</li>
                         </ul>
                     </li>
-                    <li><strong>Key Insights:</strong> You can discern whether larger companies tend to offer higher compensation or if smaller organizations provide comparable salaries, which is valuable information when considering company scale during your job search.</li>
+                    <li><strong>Key Insights:</strong> You can discern whether larger companies offer higher compensation or if smaller organizations provide comparable salaries, which is valuable information when considering company scale during your job search.</li>
                 </ul>
             </div>
 </div>
@@ -355,7 +397,7 @@
 <iframe src="salary_remote_ratio.html"></iframe>
 <div class="description">
                 <ul>
-                    <li><strong>Purpose:</strong> This box plot explores the relationship between salary levels and different remote work arrangements in AI roles.</li>
+                    <li><strong>Purpose:</strong> This box plot explores the relationship between salary levels and different remote work arrangements (on-site, hybrid, fully remote) in AI roles.</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
                             <li>0: On-site.</li>
@@ -480,8 +522,8 @@
                     <li><strong>Purpose:</strong> This chart illustrates the most frequently required educational qualifications for AI roles, offering insights into industry academic expectations.</li>
                     <li><strong>Abbreviations:</strong>
                         <ul>
-                            <li>Master: Master's Degree.</li>
                             <li>Bachelor: Bachelor's Degree.</li>
+                            <li>Master: Master's Degree.</li>
                             <li>PhD: Doctor of Philosophy.</li>
                             <li>Associate: Associate's Degree.</li>
                             <li>FT: Full-time.</li>
@@ -650,13 +692,14 @@
                             <li>You can use filters for "Employment Type," "Industry," and a "Top N Skills" slider to refine your analysis.</li>
                         </ul>
                     </li>
-                    <li><strong>Key Insights:</strong> You can pinpoint skills that offer significant financial returns in AI. This visualization is crucial for professionals seeking to maximize their earning potential by focusing on relevant high-value skills.</li>
+                    <li><strong>Key Insights:</strong> You can pinpoint skills that offer significant financial returns in AI. This helps you prioritize learning and specialization to maximize earning potential.</li>
                 </ul>
             </div>
 </div>
 
 </div>
-<div class="category" id="aboutDataset"> <h2>About the Dataset</h2>
+<div class="category" id="aboutDataset">
+<h2>About the Dataset</h2>
 <div class="about-container active">
     <p>The <strong>AI & Data Job Salaries and Skills Dataset 2024-2025</strong> is synthetically prepared and provides a detailed, global overview of job listings in artificial intelligence, data science, machine learning, and related fields. This dataset aggregates job postings from October 2024 to July 2025, capturing a wide spectrum of roles, required skills, compensation, and organizational attributes across multiple countries and industries.</p>
     <p>With over 15,000 entries, each record details the job title, salary (in USD and local currency), experience level, employment type, company location and size, remote work ratio, required technical skills, education and experience requirements, industry, posting and application dates, job description length, benefits score, and company name.</p>
